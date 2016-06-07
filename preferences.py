@@ -10,12 +10,14 @@ with open('music.csv', 'rU') as mf:
     reader = csv.reader(mf)
     for row in reader:
         music.append({'id': row[0], 'name': row[1], 'artist': row[2],
-                        'tempo': row[3],'genre': row[2]})
+                        'tempo': row[3],'genre': row[4]})
+print len(music)
 
 with open('users.csv', 'rU') as uf:
     reader = csv.reader(uf)
     for row in reader:
         users.append({'id': row[0], 'name': row[1], 'age': row[2], 'gender': row[3]})
+print len(users)
 
 def flip(p):
     return 'H' if random.random() < p else 'T'
@@ -43,9 +45,19 @@ def get_tempo_range(tempo):
 def generate_probability_map():
     for i, u in enumerate(users):
         for j, m in enumerate(music):
-            key = str(get_age_range(u['age'])) + u['gender'] + str(get_tempo_range(m['tempo'])) + m['genre']
+            key = str(get_age_range(int(u['age']))) + u['gender'] + str(get_tempo_range(float(m['tempo']))) + m['genre']
             if key not in probabilities:
-                probabilities[key] = random.uniform(0,1)
+                print key
+                if key == '1male2Rock':
+                    probabilities[key] = 0.8
+                elif key == '1female2Rock':
+                    probabilities[key] = 0.7
+                elif key == '1male2Rock':
+                    probabilities[key] = 0.8
+                elif key == '1female2Rock':
+                    probabilities[key] = 0.8
+                else:
+                    probabilities[key] = random.uniform(0,0.5)
             add = flip(probabilities[key])
             if add == 'H':
                 preferences.append([u['id'], m['id']])
