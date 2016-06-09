@@ -1,9 +1,11 @@
 import csv
 import pandas
 import numpy 
-from sklearn.tree import DecisionTreeRegressor
 from sklearn import cross_validation
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import accuracy_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 
 # Process songs
 songs = pandas.read_csv('music.csv', header=None)
@@ -37,7 +39,7 @@ combo.fillna(0, inplace=True)
 combo.set_index(['Song_ID', 'User_ID'], inplace=True)
 print combo.head(5)
 
-
+# Getting the training and validation data. 
 y = combo['Preferred'].as_matrix()
 
 combo.drop(['Preferred'], axis=1, inplace=True)
@@ -45,7 +47,13 @@ X = combo.as_matrix()
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2, random_state=0)
 
-estimator = DecisionTreeRegressor()
+#estimator = LogisticRegression()
+#estimator = DecisionTreeClassifier()
+estimator = RandomForestClassifier(min_samples_leaf=100)
 estimator.fit(X_train,y_train)
 y_pred = estimator.predict(X_test)
-print mean_squared_error(y_test, y_pred)
+print accuracy_score(y_test, y_pred, normalize=True)
+
+# Cross validation
+scores = cross_validation.cross_val_score(estimator, X, y, cv=5, scoring='accuracy')
+print scores
