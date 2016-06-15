@@ -6,20 +6,27 @@ from sklearn.metrics import accuracy_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
 
 # Process songs
 songs = pandas.read_csv('music.csv', header=None)
 songs.columns = ['Song_ID', 'Title', 'Singer', 'Tempo', 'Genre']
 print songs.head(5)
+songs[['Song_ID', 'Genre']].groupby(['Genre']).count().plot(kind='bar')
 songs = pandas.get_dummies(songs[['Song_ID', 'Tempo','Genre']], columns = ['Genre'])
 print songs.head(5)
+songs[['Tempo']].plot.hist()
 
 # Process users
 users = pandas.read_csv('users.csv', header=None)
 users.columns = ['User_ID', 'Name', 'Age', 'Gender']
 print users.head(5)
+users[['User_ID', 'Gender']].groupby(['Gender']).count().plot(kind='bar')
+
 users = pandas.get_dummies(users[['User_ID', 'Age', 'Gender']], columns = ['Gender'])
 print users.head(5)
+users[['Age']].plot.hist()
+plt.show()
 
 # Process preferences
 preferences = pandas.read_csv('preferences.csv', header=None)
@@ -38,6 +45,8 @@ combo = combo.merge(preferences, 'left', on = ['Song_ID', 'User_ID'])
 combo.fillna(0, inplace=True)
 combo.set_index(['Song_ID', 'User_ID'], inplace=True)
 print combo.head(5)
+
+
 
 # Getting the training and validation data. 
 y = combo['Preferred'].as_matrix()
